@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAM Internship – Day 1 Revision | SAML 2.0, OAuth 2.0 & OIDC</title>
+  <meta name="description" content="Concise, high-impact revision sheet covering SAML 2.0, OAuth 2.0, and OpenID Connect for Identity & Access Management." />
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-card: #161f33;
+      --bg-card-hover: #1c2742;
+      --border-subtle: #24324f;
+      --border-highlight: #3b82f6;
+      
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-bright: #ffffff;
+      
+      --accent-saml: #ec4899;
+      --accent-saml-bg: rgba(236, 72, 153, 0.12);
+      --accent-oauth: #3b82f6;
+      --accent-oauth-bg: rgba(59, 130, 246, 0.12);
+      --accent-oidc: #10b981;
+      --accent-oidc-bg: rgba(16, 185, 129, 0.12);
+      --accent-amber: #f59e0b;
+      --accent-amber-bg: rgba(245, 158, 11, 0.12);
+      
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      padding-bottom: 5rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(180deg, #111827 0%, #0b0f19 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 2.2rem 0 1.8rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      background-color: var(--accent-oauth-bg);
+      color: var(--accent-oauth);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-bright);
+      margin-top: 0.35rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Quick Nav */
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background-color: rgba(17, 24, 39, 0.7);
+      transition: all 0.2s ease;
+    }
+
+    nav a:hover {
+      color: var(--text-bright);
+      border-color: var(--border-highlight);
+      background-color: var(--bg-card);
+    }
+
+    /* Section Styles */
+    section {
+      margin-top: 2.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--border-subtle);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-saml { background: var(--accent-saml-bg); color: var(--accent-saml); border: 1px solid rgba(236,72,153,0.3); }
+    .tag-oauth { background: var(--accent-oauth-bg); color: var(--accent-oauth); border: 1px solid rgba(59,130,246,0.3); }
+    .tag-oidc { background: var(--accent-oidc-bg); color: var(--accent-oidc); border: 1px solid rgba(16,185,129,0.3); }
+    .tag-amber { background: var(--accent-amber-bg); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.3); }
+
+    /* Video Placeholder Section */
+    .video-card {
+      background: linear-gradient(135deg, rgba(22, 31, 51, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 2px dashed #334155;
+      border-radius: var(--radius-lg);
+      padding: 2.2rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent-saml), var(--accent-oauth), var(--accent-oidc));
+    }
+
+    .video-icon-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+      color: #60a5fa;
+    }
+
+    .video-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 0.35rem;
+    }
+
+    .video-note {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .video-meta {
+      display: inline-flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* 5-Min Verbal Cue Box */
+    .cheat-banner {
+      margin-top: 1.5rem;
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid #3b82f6;
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cheat-summary {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .cheat-summary strong {
+      color: #ffffff;
+    }
+
+    .verbal-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .verbal-pill {
+      font-size: 0.78rem;
+      padding: 0.25rem 0.6rem;
+      background: #0f172a;
+      border-radius: var(--radius-sm);
+      border: 1px solid #334155;
+      color: #94a3b8;
+    }
+    .verbal-pill span {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    /* Grid Layouts */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+
+    /* Card Component */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .card:hover {
+      border-color: #334155;
+    }
+
+    .card-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 0.65rem;
+    }
+
+    .card-heading svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      margin-bottom: 0.75rem;
+    }
+
+    .bullet-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.84rem;
+    }
+
+    .bullet-list li {
+      position: relative;
+      padding-left: 1.2rem;
+      margin-bottom: 0.45rem;
+      color: #94a3b8;
+    }
+
+    .bullet-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0.2rem;
+      color: var(--border-highlight);
+      font-weight: bold;
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .bullet-list li strong {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .code-term {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid #334155;
+      color: #38bdf8;
+    }
+
+    /* Flow Diagrams */
+    .flow-container {
+      background-color: #0d1322;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.4rem;
+      margin-top: 1.25rem;
+    }
+
+    .flow-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .flow-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .flow-steps-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .flow-step-item {
+      display: grid;
+      grid-template-columns: 32px 150px 1fr;
+      align-items: center;
+      gap: 1rem;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.9rem;
+      font-size: 0.86rem;
+    }
+
+    @media (max-width: 720px) {
+      .flow-step-item {
+        grid-template-columns: 28px 1fr;
+        gap: 0.6rem;
+      }
+      .flow-actor {
+        grid-column: 2 / -1;
+      }
+    }
+
+    .flow-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #e2e8f0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flow-actor {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #93c5fd;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .flow-action {
+      color: #cbd5e1;
+    }
+
+    .flow-action strong {
+      color: #ffffff;
+    }
+
+    /* Comparison Table */
+    .table-container {
+      overflow-x: auto;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-soft);
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-weight: 700;
+      padding: 0.9rem 1.1rem;
+      border-bottom: 2px solid #334155;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      letter-spacing: 0.05em;
+    }
+
+    tbody td {
+      padding: 0.9rem 1.1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .col-feature {
+      font-weight: 600;
+      color: #f1f5f9;
+      width: 20%;
+    }
+
+    .col-saml {
+      border-left: 1px solid rgba(236,72,153,0.15);
+      background: rgba(236,72,153,0.02);
+    }
+    
+    .col-oauth {
+      border-left: 1px solid rgba(59,130,246,0.15);
+      background: rgba(59,130,246,0.02);
+    }
+
+    .col-oidc {
+      border-left: 1px solid rgba(16,185,129,0.15);
+      background: rgba(16,185,129,0.02);
+    }
+
+    /* Key Takeaways Section */
+    .takeaways-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+
+    .takeaway-card {
+      background: #131b2e;
+      border-left: 4px solid;
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.2rem;
+    }
+
+    .takeaway-card.t-saml { border-color: var(--accent-saml); }
+    .takeaway-card.t-oauth { border-color: var(--accent-oauth); }
+    .takeaway-card.t-oidc { border-color: var(--accent-oidc); }
+    .takeaway-card.t-amber { border-color: var(--accent-amber); }
+
+    .takeaway-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .takeaway-text {
+      font-size: 0.92rem;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .takeaway-text strong {
+      color: #ffffff;
+    }
+
+    /* Notes Link Section */
+    .notes-banner {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .notes-info h4 {
+      font-size: 1rem;
+      color: #ffffff;
+      margin-bottom: 0.2rem;
+    }
+
+    .notes-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .notes-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .note-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #93c5fd;
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .note-btn:hover {
+      background-color: #1e293b;
+      border-color: #60a5fa;
+      color: #ffffff;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 4rem;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    /* Print Optimization */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      header {
+        position: static !important;
+        background: none !important;
+        border-bottom: 2px solid #000000 !important;
+      }
+      nav, .notes-banner, .video-card {
+        display: none !important;
+      }
+      .card, .flow-container, .table-container, .takeaway-card {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #cccccc !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+      }
+      .card-desc, .bullet-list li, tbody td {
+        color: #222222 !important;
+      }
+      .bullet-list li strong, .flow-action strong, thead th {
+        color: #000000 !important;
+      }
+      .code-term {
+        border: 1px solid #cccccc !important;
+        color: #000000 !important;
+        background: #f1f5f9 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div>
+          <span class="badge-pill">IAM Internship &bull; Day 1</span>
+          <h1>Identity &amp; Access Management Revision</h1>
+          <p class="subtitle">Concise reference &bull; SAML 2.0 &bull; OAuth 2.0 &bull; OpenID Connect (OIDC)</p>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Purpose: 5-Minute Oral Walkthrough</div>
+          <div style="font-size: 0.8rem; color: #38bdf8; font-family: var(--font-mono); margin-top: 2px;">Ready for Browser Offline Viewing</div>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#video-section">&blacktriangleright; 5-Min Video</a>
+        <a href="#saml">1. SAML 2.0</a>
+        <a href="#oauth">2. OAuth 2.0</a>
+        <a href="#oidc">3. OpenID Connect</a>
+        <a href="#comparison">4. Comparison Matrix</a>
+        <a href="#takeaways">5. Key Takeaways</a>
+        <a href="#notes">Handwritten Notes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. VIDEO SECTION (TOP) -->
+    <section id="video-section">
+      <div class="video-card">
+        <div class="video-icon-circle">
+          <!-- Camera / Play SVG Icon -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <h2 class="video-title">My 5-Minute Understanding Video</h2>
+        <p class="video-note">Video will be added after recording.</p>
+        <div class="video-meta">
+          <span>&bull; Target Duration: ~5 Minutes</span>
+          <span>&bull; Content: SAML vs OAuth vs OIDC verbal synthesis</span>
+        </div>
+      </div>
+
+      <!-- Quick 60-Second Speaking Cheat Sheet -->
+      <div class="cheat-banner">
+        <div class="cheat-summary">
+          <strong>Quick Verbal Mental Model:</strong><br />
+          SAML 2.0 = Enterprise SSO via XML Assertions &bull; 
+          OAuth 2.0 = Delegated API Authorization via Access Tokens &bull; 
+          OIDC = Identity &amp; User Authentication on top of OAuth via JWT ID Tokens.
+        </div>
+        <div class="verbal-pills">
+          <div class="verbal-pill"><span>SAML:</span> IdP &rarr; SP</div>
+          <div class="verbal-pill"><span>OAuth:</span> Client &rarr; RS</div>
+          <div class="verbal-pill"><span>OIDC:</span> OP &rarr; RP</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SAML 2.0 SECTION -->
+    <section id="saml">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="tag tag-saml">Protocol 01</span>
+          <h2 class="section-title">SAML 2.0 (Security Assertion Markup Language)</h2>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">XML-based &bull; Enterprise Federation</span>
+      </div>
+
+      <!-- SAML Core Concepts Cards -->
+      <div class="card-grid-3">
+        <!-- Card 1 -->
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            What is SAML 2.0?
+          </div>
+          <p class="card-desc">An open, XML-based standard created by OASIS for exchanging authentication and authorization data across distinct security domains.</p>
+          <ul class="bullet-list">
+            <li><strong>Federation:</strong> Linking user identities across autonomous systems without credential replication.</li>
+            <li><strong>Single Sign-On (SSO):</strong> Log in once at the Identity Provider to securely access multiple independent applications.</li>
+            <li><strong>User / Principal:</strong> The entity (employee/human user) attempting access.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Entities &amp; Trust
+          </div>
+          <p class="card-desc">Two primary parties form an authoritative relationship bound by public key cryptography.</p>
+          <ul class="bullet-list">
+            <li><strong>Identity Provider (IdP):</strong> Holds user credentials, performs authentication, and issues signed assertions (e.g., Okta, Ping, Entra ID).</li>
+            <li><strong>Service Provider (SP):</strong> The web application providing services (e.g., Salesforce, Workday, AWS Console).</li>
+            <li><strong>Circle of Trust:</strong> Cryptographic trust established in advance via metadata exchange (X.509 certs, endpoints).</li>
+          </ul>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            ACS &amp; SP-Initiated SSO
+          </div>
+          <p class="card-desc">How users land on the service and where assertions are consumed.</p>
+          <ul class="bullet-list">
+            <li><strong>SP-Initiated SSO:</strong> The flow begins at the SP when an unauthenticated user visits protected resources and gets redirected to the IdP.</li>
+            <li><strong>ACS (Assertion Consumer Service):</strong> The designated endpoint on the SP that receives, parses, and validates incoming SAML assertions.</li>
+            <li><strong>IdP-Initiated SSO:</strong> Starts directly from the IdP portal dashboard.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Anatomy of a SAML Assertion -->
+      <div class="card" style="margin-top: 1.25rem;">
+        <div class="card-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          Anatomy of a SAML Assertion
+        </div>
+        <p class="card-desc">The XML document issued by the IdP containing verified statements regarding the user:</p>
+        <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <div style="background: rgba(15,23,42,0.6); padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: #f472b6; font-size: 0.85rem; margin-bottom: 0.3rem;">1. Subject</div>
+            <div style="font-size: 0.8rem; color: #cbd5e1;">Identifies the authenticated principal via <span class="code-term">&lt;NameID&gt;</span> (e.g., email or unique GUID).</div>
+          </div>
+          <div style="background: rgba(15,23,42,0.6); padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: #f472b6; font-size: 0.85rem; margin-bottom: 0.3rem;">2. Conditions</div>
+            <div style="font-size: 0.8rem; color: #cbd5e1;">Validity constraints: <span class="code-term">NotBefore</span>, <span class="code-term">NotOnOrAfter</span>, and <span class="code-term">AudienceRestriction</span> (SP entity ID).</div>
+          </div>
+          <div style="background: rgba(15,23,42,0.6); padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: #f472b6; font-size: 0.85rem; margin-bottom: 0.3rem;">3. AuthnStatement</div>
+            <div style="font-size: 0.8rem; color: #cbd5e1;">Proof of authentication: timestamp, session index, and method/context (password, MFA).</div>
+          </div>
+          <div style="background: rgba(15,23,42,0.6); padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: #f472b6; font-size: 0.85rem; margin-bottom: 0.3rem;">4. AttributeStatement</div>
+            <div style="font-size: 0.8rem; color: #cbd5e1;">User attributes shared with SP: first name, last name, department, email, security groups.</div>
+          </div>
+          <div style="background: rgba(15,23,42,0.6); padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: #f472b6; font-size: 0.85rem; margin-bottom: 0.3rem;">5. Digital Signature</div>
+            <div style="font-size: 0.8rem; color: #cbd5e1;">Cryptographic XML signature verifying message integrity and authenticity via IdP certificate.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAML Web Browser SSO Flow Diagram -->
+      <div class="flow-container">
+        <div class="flow-header">
+          <span class="flow-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            SAML 2.0 Web Browser SSO Flow (SP-Initiated via HTTP POST / Redirect)
+          </span>
+          <span class="tag tag-saml">Sequence Flow</span>
+        </div>
+        <div class="flow-steps-wrapper">
+          <div class="flow-step-item">
+            <div class="flow-step-num">1</div>
+            <div class="flow-actor">User &rarr; SP</div>
+            <div class="flow-action">User attempts to access a protected URL on the <strong>Service Provider (SP)</strong> without an active session.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">2</div>
+            <div class="flow-actor">SP &rarr; Browser</div>
+            <div class="flow-action">SP generates a <span class="code-term">&lt;samlp:AuthnRequest&gt;</span>, base64 encodes it, and redirects browser to IdP SSO endpoint.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">3</div>
+            <div class="flow-actor">Browser &rarr; IdP</div>
+            <div class="flow-action">Browser follows redirect to <strong>Identity Provider (IdP)</strong>; IdP challenges the user for credentials (password + MFA).</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">4</div>
+            <div class="flow-actor">IdP Processing</div>
+            <div class="flow-action">IdP verifies credentials, generates a signed XML <span class="code-term">&lt;samlp:Response&gt;</span> enclosing the SAML Assertion.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">5</div>
+            <div class="flow-actor">IdP &rarr; SP (via POST)</div>
+            <div class="flow-action">IdP returns an auto-submitting HTML form causing browser to HTTP POST the assertion to the SP's <strong>ACS URL</strong>.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">6</div>
+            <div class="flow-actor">SP Validation</div>
+            <div class="flow-action">SP validates signature via trusted IdP cert, checks conditions/timestamps, creates local session, and logs the user in.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. OAUTH 2.0 SECTION -->
+    <section id="oauth">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="tag tag-oauth">Framework 02</span>
+          <h2 class="section-title">OAuth 2.0 (Open Authorization Framework)</h2>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">RFC 6749 &bull; Delegated Access</span>
+      </div>
+
+      <!-- OAuth Core Cards -->
+      <div class="card-grid-2">
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            What is OAuth 2.0? (AuthN vs AuthZ)
+          </div>
+          <p class="card-desc">OAuth 2.0 is an authorization framework that enables third-party applications to obtain limited access to an HTTP service on behalf of a resource owner.</p>
+          <ul class="bullet-list">
+            <li><strong>Authorization &ne; Authentication:</strong> <em>Authentication (AuthN)</em> answers &ldquo;Who are you?&rdquo; while <em>Authorization (AuthZ)</em> answers &ldquo;What permissions do you have?&rdquo;</li>
+            <li><strong>Core Purpose:</strong> Eliminates the need for users to share passwords with third parties (the &ldquo;valet key&rdquo; pattern for APIs).</li>
+            <li><strong>Delegated Access:</strong> User grants Client permission to read/write specific resources for a limited time.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            The 4 OAuth 2.0 Roles
+          </div>
+          <p class="card-desc">Every OAuth 2.0 interaction takes place between four clearly defined actors:</p>
+          <ul class="bullet-list">
+            <li><strong>Resource Owner:</strong> The entity (usually the human user) capable of granting access to a protected resource.</li>
+            <li><strong>Client:</strong> The application making protected resource requests on behalf of the resource owner (web app, mobile app, SPA).</li>
+            <li><strong>Authorization Server:</strong> Issues access tokens after authenticating the owner and obtaining authorization consent.</li>
+            <li><strong>Resource Server:</strong> The API hosting protected resources, accepting and validating access tokens.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Token Types & Protected Resource Access -->
+      <div class="card-grid-2" style="margin-top: 1.25rem;">
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+            Access Token vs Refresh Token
+          </div>
+          <p class="card-desc">Credentials that represent granted authorization authority:</p>
+          <ul class="bullet-list">
+            <li><strong>Access Token:</strong> Short-lived string/JWT used by the client to access protected APIs. Must be protected against leakage.</li>
+            <li><strong>Refresh Token:</strong> Long-lived credential used exclusively with the Authorization Server to obtain a fresh access token without prompting the user.</li>
+            <li><strong>Bearer Token:</strong> Possession gives access (<span class="code-term">Authorization: Bearer &lt;token&gt;</span>).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            Protected Resource Access
+          </div>
+          <p class="card-desc">How the client communicates with the API:</p>
+          <ul class="bullet-list">
+            <li>Client includes the token in the HTTP header: <span class="code-term">Authorization: Bearer ya29.a0AfH...</span></li>
+            <li>Resource Server verifies token signature or queries the Authorization Server via <strong>Token Introspection</strong> (RFC 7662).</li>
+            <li>Enforces scopes: if token lacks required scope, returns <span class="code-term">HTTP 403 Forbidden</span>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- OAuth 2.0 Authorization Code Flow Diagram -->
+      <div class="flow-container">
+        <div class="flow-header">
+          <span class="flow-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            OAuth 2.0 Authorization Code Flow (Gold Standard for Secure Apps)
+          </span>
+          <span class="tag tag-oauth">Sequence Flow</span>
+        </div>
+        <div class="flow-steps-wrapper">
+          <div class="flow-step-item">
+            <div class="flow-step-num">1</div>
+            <div class="flow-actor">Client &rarr; Auth Server</div>
+            <div class="flow-action">Client redirects user to Auth Server with <span class="code-term">response_type=code</span>, <span class="code-term">client_id</span>, <span class="code-term">redirect_uri</span>, and requested <span class="code-term">scope</span>.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">2</div>
+            <div class="flow-actor">User &amp; Auth Server</div>
+            <div class="flow-action">User authenticates at the Auth Server and grants consent for the requested scopes (permissions).</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">3</div>
+            <div class="flow-actor">Auth Server &rarr; Client</div>
+            <div class="flow-action">Auth Server redirects back to Client's <span class="code-term">redirect_uri</span> delivering a temporary, single-use <strong>Authorization Code</strong>.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">4</div>
+            <div class="flow-actor">Client &rarr; Auth Server</div>
+            <div class="flow-action"><strong>Back-Channel:</strong> Client exchanges the Auth Code + <span class="code-term">client_secret</span> directly with the Auth Server token endpoint.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">5</div>
+            <div class="flow-actor">Auth Server &rarr; Client</div>
+            <div class="flow-action">Auth Server validates code and secret, then issues an <strong>Access Token</strong> (&amp; optional <strong>Refresh Token</strong>).</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">6</div>
+            <div class="flow-actor">Client &rarr; Resource Server</div>
+            <div class="flow-action">Client requests protected API using header <span class="code-term">Authorization: Bearer &lt;access_token&gt;</span> to fetch data.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. OPENID CONNECT (OIDC) SECTION -->
+    <section id="oidc">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="tag tag-oidc">Identity Layer 03</span>
+          <h2 class="section-title">OpenID Connect (OIDC)</h2>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">JSON/JWT &bull; OAuth 2.0 Extension</span>
+      </div>
+
+      <!-- Core Formula Card -->
+      <div class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(22, 31, 51, 0.95) 100%); border-color: rgba(16, 185, 129, 0.3);">
+        <div style="font-size: 1.15rem; font-weight: 700; color: #34d399; margin-bottom: 0.3rem;">
+          The Core Formula: OIDC = OAuth 2.0 + Authentication + Identity
+        </div>
+        <p style="font-size: 0.9rem; color: #cbd5e1;">
+          OAuth 2.0 was explicitly designed for authorization (&ldquo;can the client access my files?&rdquo;), not identity. OIDC extends OAuth 2.0 by standardizing user authentication and returning an identity assertion in the form of an <strong>ID Token</strong>.
+        </p>
+      </div>
+
+      <!-- OIDC Entities & Token Comparison -->
+      <div class="card-grid-2" style="margin-top: 1.25rem;">
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            OIDC Core Terminology
+          </div>
+          <p class="card-desc">Mapping OAuth roles into Identity concepts:</p>
+          <ul class="bullet-list">
+            <li><strong>OpenID Provider (OP):</strong> The OAuth 2.0 Authorization Server capable of authenticating the End-User and issuing ID Tokens (e.g., Google, Auth0, Okta).</li>
+            <li><strong>Relying Party (RP):</strong> The OAuth 2.0 Client application relying on the OP for user authentication and claims.</li>
+            <li><strong>End-User:</strong> The human subject being authenticated.</li>
+            <li><strong>UserInfo Endpoint:</strong> Protected OAuth 2.0 REST endpoint where the RP uses the Access Token to retrieve additional profile claims.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            Access Token vs. ID Token
+          </div>
+          <p class="card-desc">The critical distinction in modern IAM architectures:</p>
+          <ul class="bullet-list">
+            <li><strong>Access Token:</strong> Intended for the <em>Resource Server (API)</em>. Proves delegated authorization. Often opaque or JWT, but the client does NOT need to parse it.</li>
+            <li><strong>ID Token:</strong> Intended for the <em>Relying Party (Client)</em>. Proves authentication occurred and carries identity claims about the user. Always a formatted <strong>JWT</strong>.</li>
+            <li><strong>Anti-Pattern:</strong> Never pass an ID Token as an API bearer authorization credential.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ID Token JWT & Claims -->
+      <div class="card-grid-2" style="margin-top: 1.25rem;">
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            ID Token Structure (JWT)
+          </div>
+          <p class="card-desc">Consists of three Base64URL-encoded parts separated by periods (<span class="code-term">header.payload.signature</span>):</p>
+          <ul class="bullet-list">
+            <li><strong>Header:</strong> Token type (<span class="code-term">JWT</span>), signing algorithm (<span class="code-term">RS256</span>), and key ID (<span class="code-term">kid</span>).</li>
+            <li><strong>Payload:</strong> Set of verifiable claims about the user and authentication event.</li>
+            <li><strong>Signature:</strong> Cryptographic signature generated by the OP private key; verified by RP using the OP's public keys (from <span class="code-term">jwks_uri</span>).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            Key Claims &amp; Scopes
+          </div>
+          <p class="card-desc">Standard assertions conveyed inside the ID token:</p>
+          <ul class="bullet-list">
+            <li><span class="code-term">iss</span> (Issuer): URL of the OP that issued the token.</li>
+            <li><span class="code-term">sub</span> (Subject): Unique, persistent identifier for the user.</li>
+            <li><span class="code-term">aud</span> (Audience): Must match the Client's <span class="code-term">client_id</span>.</li>
+            <li><span class="code-term">exp</span> / <span class="code-term">iat</span>: Expiration timestamp &amp; Issued-At timestamp.</li>
+            <li><span class="code-term">nonce</span>: Mitigates replay attacks by binding client request to token.</li>
+            <li><strong>Scopes:</strong> <span class="code-term">openid</span> (mandatory), <span class="code-term">profile</span>, <span class="code-term">email</span>, <span class="code-term">address</span>.</li>
+            <li><strong>Claims Mapping:</strong> Mapping IdP claims to internal app roles/attributes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- OIDC Authorization Code Flow Diagram -->
+      <div class="flow-container">
+        <div class="flow-header">
+          <span class="flow-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            OIDC Authorization Code Flow (Authentication + Token Issuance)
+          </span>
+          <span class="tag tag-oidc">Sequence Flow</span>
+        </div>
+        <div class="flow-steps-wrapper">
+          <div class="flow-step-item">
+            <div class="flow-step-num">1</div>
+            <div class="flow-actor">RP &rarr; OP</div>
+            <div class="flow-action">Relying Party redirects user to OP authorization endpoint with <span class="code-term">scope=openid profile email</span>, <span class="code-term">response_type=code</span>, and <span class="code-term">nonce</span>.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">2</div>
+            <div class="flow-actor">End-User &amp; OP</div>
+            <div class="flow-action">User authenticates at OP (login + MFA) and consents to share profile/email with the Relying Party.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">3</div>
+            <div class="flow-actor">OP &rarr; RP</div>
+            <div class="flow-action">OP sends an HTTP 302 redirect back to RP's redirect URI with a short-lived <strong>Authorization Code</strong>.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">4</div>
+            <div class="flow-actor">RP &rarr; OP (Token Endpoint)</div>
+            <div class="flow-action"><strong>Back-Channel POST:</strong> RP presents Auth Code, <span class="code-term">client_id</span>, and <span class="code-term">client_secret</span> to the OP token endpoint.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">5</div>
+            <div class="flow-actor">OP &rarr; RP Response</div>
+            <div class="flow-action">OP validates credentials and returns both an <strong>ID Token (JWT)</strong> and an <strong>Access Token</strong>.</div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">6</div>
+            <div class="flow-actor">RP Validation &amp; UserInfo</div>
+            <div class="flow-action">RP verifies ID Token signature (<span class="code-term">iss</span>, <span class="code-term">aud</span>, <span class="code-term">exp</span>, <span class="code-term">nonce</span>). Optionally calls <span class="code-term">/userinfo</span> with Access Token for additional claims.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. COMPARISON SECTION -->
+    <section id="comparison">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="tag tag-amber">Synthesis 04</span>
+          <h2 class="section-title">Architectural Comparison: SAML 2.0 vs. OAuth 2.0 vs. OIDC</h2>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Side-by-side Matrix</span>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-feature">Dimension</th>
+              <th class="col-saml" style="color: #f472b6;">SAML 2.0</th>
+              <th class="col-oauth" style="color: #60a5fa;">OAuth 2.0</th>
+              <th class="col-oidc" style="color: #34d399;">OpenID Connect (OIDC)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-feature">Primary Purpose</td>
+              <td class="col-saml">Cross-domain Enterprise Single Sign-On (SSO) and federation.</td>
+              <td class="col-oauth">Delegated authorization for APIs without credential sharing.</td>
+              <td class="col-oidc">Federated user authentication and identity assertion for modern apps.</td>
+            </tr>
+            <tr>
+              <td class="col-feature">Main Mechanism / Token</td>
+              <td class="col-saml"><strong>XML Assertion</strong> (digitally signed XML document with assertions).</td>
+              <td class="col-oauth"><strong>Access Token</strong> (opaque string or JWT) + Refresh Token.</td>
+              <td class="col-oidc"><strong>ID Token</strong> (always a signed JSON Web Token - JWT) + Access Token.</td>
+            </tr>
+            <tr>
+              <td class="col-feature">Authentication (AuthN)</td>
+              <td class="col-saml"><strong>Native &amp; Central:</strong> Contains AuthnStatement detailing how/when user logged in.</td>
+              <td class="col-oauth"><strong>No:</strong> Explicitly NOT an authentication protocol (only handles permissions).</td>
+              <td class="col-oidc"><strong>Yes:</strong> Purpose-built identity extension layered directly over OAuth 2.0.</td>
+            </tr>
+            <tr>
+              <td class="col-feature">Authorization (AuthZ)</td>
+              <td class="col-saml">Limited (coarse-grained attribute release to SP).</td>
+              <td class="col-oauth"><strong>Core Speciality:</strong> Fine-grained delegated authorization via scopes.</td>
+              <td class="col-oidc">Inherits OAuth 2.0 scope-based delegated API authorization.</td>
+            </tr>
+            <tr>
+              <td class="col-feature">Data Format &amp; Transport</td>
+              <td class="col-saml">XML, XML-DSig, heavy payloads via HTTP POST/Redirect bindings in browser.</td>
+              <td class="col-oauth">JSON, HTTP Authorization Bearer headers, back-channel API calls.</td>
+              <td class="col-oidc">JSON, REST, JWT, lightweight headers; optimized for web &amp; mobile.</td>
+            </tr>
+            <tr>
+              <td class="col-feature">Typical Use Case</td>
+              <td class="col-saml">Legacy &amp; enterprise B2B SaaS (Salesforce, Workday, internal corporate portals).</td>
+              <td class="col-oauth">Securing REST APIs, third-party app integrations (e.g., &ldquo;Allow app to read calendar&rdquo;).</td>
+              <td class="col-oidc">Modern web/mobile apps, consumer SSO (&ldquo;Sign in with Google/Apple&rdquo;), SPA auth.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. KEY TAKEAWAYS SECTION -->
+    <section id="takeaways">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="tag tag-amber">Day 1 Review 05</span>
+          <h2 class="section-title">Key Takeaways for Verbal Revision</h2>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">6 Essential Lessons</span>
+      </div>
+
+      <div class="takeaways-box">
+        <div class="takeaway-card t-saml">
+          <div class="takeaway-num">Takeaway 1 &bull; Enterprise SSO</div>
+          <div class="takeaway-text">
+            <strong>SAML 2.0 is the enterprise powerhouse:</strong> Built on XML and digital signatures, it excels at browser-based web SSO between an IdP and enterprise Service Providers (SPs).
+          </div>
+        </div>
+
+        <div class="takeaway-card t-oauth">
+          <div class="takeaway-num">Takeaway 2 &bull; AuthN vs AuthZ</div>
+          <div class="takeaway-text">
+            <strong>OAuth 2.0 is authorization, NOT authentication:</strong> It solves delegated API access using scoped tokens. Using OAuth alone to prove user identity is an insecure anti-pattern.
+          </div>
+        </div>
+
+        <div class="takeaway-card t-oidc">
+          <div class="takeaway-num">Takeaway 3 &bull; The OIDC Bridge</div>
+          <div class="takeaway-text">
+            <strong>OIDC standardizes identity on OAuth:</strong> By adding the <span class="code-term">openid</span> scope and an <strong>ID Token (JWT)</strong>, OIDC gives clients verifiable proof of user authentication.
+          </div>
+        </div>
+
+        <div class="takeaway-card t-saml">
+          <div class="takeaway-num">Takeaway 4 &bull; Token Destination Rule</div>
+          <div class="takeaway-text">
+            <strong>Know who consumes which token:</strong> <strong>ID Tokens</strong> are consumed by the <em>Client/RP</em> for user profile info; <strong>Access Tokens</strong> are consumed by the <em>API/Resource Server</em> for authorization.
+          </div>
+        </div>
+
+        <div class="takeaway-card t-oauth">
+          <div class="takeaway-num">Takeaway 5 &bull; Secret Protection</div>
+          <div class="takeaway-text">
+            <strong>Auth Code flow keeps secrets safe:</strong> By splitting the flow into a front-channel code and back-channel token exchange, credentials and tokens avoid exposed browser address bars.
+          </div>
+        </div>
+
+        <div class="takeaway-card t-amber">
+          <div class="takeaway-num">Takeaway 6 &bull; Format Evolution</div>
+          <div class="takeaway-text">
+            <strong>XML to JSON/JWT transition:</strong> While SAML&rsquo;s XML works reliably for enterprise desktop browsers, OIDC&rsquo;s lightweight JSON/JWT design makes it ideal for mobile, SPAs, and microservices.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. HANDWRITTEN STUDY NOTES SECTION -->
+    <section id="notes">
+      <div class="notes-banner">
+        <div class="notes-info">
+          <h4>Day 1 Handwritten Lecture Notes</h4>
+          <p>Direct references to the original whiteboard/notebook diagrams and flowcharts in the workspace.</p>
+        </div>
+        <div class="notes-links">
+          <a class="note-btn" href="day-1/SAML2.0.jpeg" target="_blank">&marker; SAML 2.0 (Part 1)</a>
+          <a class="note-btn" href="day-1/SAML2.0(2).jpeg" target="_blank">&marker; SAML 2.0 (Part 2)</a>
+          <a class="note-btn" href="day-1/Auth.2.0.jpeg" target="_blank">&marker; OAuth 2.0 Notes</a>
+          <a class="note-btn" href="day-1/oidc.jpeg" target="_blank">&marker; OIDC (Part 1)</a>
+          <a class="note-btn" href="day-1/oidc2.jpeg" target="_blank">&marker; OIDC (Part 2)</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p><strong>IAM Internship &bull; Day 1 Revision Sheet</strong></p>
+      <p style="margin-top: 0.35rem;">Designed for rapid oral explanation, portfolio review, and exam prep &bull; Zero external runtime dependencies</p>
+    </div>
+  </footer>
+
+</body>
+</html>
